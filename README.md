@@ -12,13 +12,17 @@ There is currently one endpoint to the API - `report` - which accepts the follow
 - `shape` - a GeoJSON object describing an area of interest, such as a polygon of neighborhood boundaries
 - `buffer` - radius, in miles, around the center of a point or out from the edge of a polygon to extend the search. EJAM default = 3.
 - `fips` - the Census FIPS code for a Block, Block Group, or Tract
+
 `report` expects either `lat`/`lon` OR `shape` OR `fips`. The default buffer is 3 miles but can be explicitly set to 0.
 An HTML format of a report is returned.
 
 # Examples
 Block Group in the Phoenix, AZ area with a 1 mile buffer: https://ejamapi-84652557241.us-central1.run.app/report?buffer=1&fips=040131109012
+
 A point in the Phoenix area with a 4 mile buffer: https://ejamapi-84652557241.us-central1.run.app/report?lat=33&lon=-112&buffer=4
-A rectangular area of interest in Phoenix, with no buffer: https://ejamapi-84652557241.us-central1.run.app/report?shape=%7B%22type%22%3A%22FeatureCollection%22%2C%22features%22%3A%5B%7B%22type%22%3A%22Feature%22%2C%22properties%22%3A%7B%7D%2C%22geometry%22%3A%7B%22coordinates%22%3A%5B%5B%5B-112.01991856401462%2C33.51124624304089%5D%2C%5B-112.01991856401462%2C33.47010908826502%5D%2C%5B-111.95488826248605%2C33.47010908826502%5D%2C%5B-111.95488826248605%2C33.51124624304089%5D%2C%5B-112.01991856401462%2C33.51124624304089%5D%5D%5D%2C%22type%22%3A%22Polygon%22%7D%7D%5D%7D&buffer=0
+
+A rectangular area of interest in Phoenix, with no buffer: https://ejamapi-84652557241.us-central1.run.app/report?
+shape=%7B%22type%22%3A%22FeatureCollection%22%2C%22features%22%3A%5B%7B%22type%22%3A%22Feature%22%2C%22properties%22%3A%7B%7D%2C%22geometry%22%3A%7B%22coordinates%22%3A%5B%5B%5B-112.01991856401462%2C33.51124624304089%5D%2C%5B-112.01991856401462%2C33.47010908826502%5D%2C%5B-111.95488826248605%2C33.47010908826502%5D%2C%5B-111.95488826248605%2C33.51124624304089%5D%2C%5B-112.01991856401462%2C33.51124624304089%5D%5D%5D%2C%22type%22%3A%22Polygon%22%7D%7D%5D%7D&buffer=0
 
 # Set-up
 1. Work locally with EJAM by installing R/RStudio. Follow the instructions in the EJAM documentation.
