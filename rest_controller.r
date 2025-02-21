@@ -8,7 +8,7 @@ library(geojsonsf)
 #' @param lon The input sites long
 #' @param shape The input sites geojson
 #' @param buffer The input sites buffer
-#' @get /report
+#' @post /report
 #' @serializer html
 function(lat=NULL,lon=NULL,shape=NULL,fips=NULL,buffer=3){
   buffer=as.numeric(buffer)
