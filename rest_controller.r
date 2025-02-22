@@ -20,9 +20,7 @@ function(lat = NULL,
   buffer <- as.numeric(buffer)
   # test if buffer is too big
   flag <<- 0
-  print(buffer)
   if (buffer > 15) {
-    print("big buffer")
     html <- paste(error,
                   "Please select a buffer 15 miles in radius or less</body></html>",
                   sep = " ")
