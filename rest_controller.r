@@ -2,6 +2,8 @@
 
 library(EJAM)
 library(geojsonsf)
+# install.packages("pagedown")
+# library(pagedown)
 
 #* Generate a report
 #* @param lat The input sites lat
@@ -14,7 +16,8 @@ function(lat = NULL,
          lon = NULL,
          shape = NULL,
          fips = NULL,
-         buffer = 3) {
+         buffer = 3,
+         format = 'html') {
   html <<- ""
   error <<- "<html><body><h3>Error</h3>" # default error template
   buffer <- as.numeric(buffer)
@@ -27,6 +30,8 @@ function(lat = NULL,
     flag <<- 1
   } else if (is.character(lat) &
              is.character(lon)) {
+    
+    method <- "latlon"
     # test if point input
     lat <- as.numeric(lat)
     lon <- as.numeric(lon)
@@ -57,6 +62,7 @@ function(lat = NULL,
       )
     }
   } else if (is.character(shape)) {
+    method <- "SHP"
     # test if shape input
     # try to convert to sf https://stackoverflow.com/questions/66457617/trycatch-in-r-programming
     tryCatch(
@@ -73,6 +79,7 @@ function(lat = NULL,
       x <- ejamit(radius = buffer, shapefile = shape)
     }
   } else if (is.character(fips)) {
+    method <- "FIPS"
     tryCatch(
       x <- ejamit(radius = buffer, fips = fips),
       error = function(e) {
@@ -99,15 +106,25 @@ function(lat = NULL,
     html <<- html # return error message
   } else {
     tryCatch(
-      html <<- ejam2report(x, return_html = TRUE, launch_browser = TRUE),
-      #False
+      html <<- ejam2report(x, sitenumber = 1, return_html = TRUE, launch_browser = FALSE, submitted_upload_method = method),
       error = function(e) {
         flag <<- 1
       }
     )
     if (flag == 1) {
-      html <<- paste(error, "There seems to be an issue.</body></html>", sep =
-                       " ")
+      html <<- paste(error, "There seems to be an issue producing the report.</body></html>", sep = " ")
+    } else { # no error making html, now try converting to PDF if requested
+      if (format == 'pdf'){
+        tryCatch(
+          html <<- ejam2report(x, sitenumber = 1, return_html = FALSE, launch_browser = FALSE, submitted_upload_method = method),
+          error = function(e) {
+            flag <<- 1
+          }
+        )
+        if (flag == 1) {
+          html <<- paste(error, "There seems to be an issue making the PDF.</body></html>", sep = " ")
+        }
+      }
     }
   }
   return(html)
