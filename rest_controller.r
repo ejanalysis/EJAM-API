@@ -1,4 +1,5 @@
 # Load necessary libraries
+library(rlang)
 library(plumber)
 library(EJAM)
 library(geojsonsf)
@@ -80,7 +81,7 @@ ejamit_interface <- function(area, method, buffer = 0, scale = "blockgroup") {
 #* @param buffer The buffer radius in miles
 #* @param geometries A boolean to indicate whether to include geometries in the output
 #* @post /data
-function(sites = NULL, shape = NULL, fips = NULL, buffer = 0, geometries = TRUE, res) {
+function(sites = NULL, shape = NULL, fips = NULL, buffer = 0, geometries = FALSE, scale = NULL, res) {
   # Determine the input method.
   method <- if (!is.null(sites)) "latlon" else if (!is.null(shape)) "SHP" else if (!is.null(fips)) "FIPS" else NULL
   area <- sites %||% shape %||% fips
@@ -92,7 +93,7 @@ function(sites = NULL, shape = NULL, fips = NULL, buffer = 0, geometries = TRUE,
   
   # Perform the EJAM analysis.
   result <- tryCatch(
-    ejamit_interface(area = area, method = method, buffer = as.numeric(buffer)),
+    ejamit_interface(area = area, method = method, buffer = as.numeric(buffer), scale = scale),
     error = function(e) {
       res$status <- 400
       handle_error(e$message)
