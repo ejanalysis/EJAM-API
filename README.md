@@ -1,9 +1,9 @@
  [![Code of Conduct](https://img.shields.io/badge/%E2%9D%A4-code%20of%20conduct-blue.svg?style=flat)](https://github.com/edgi-govdata-archiving/overview/blob/main/CONDUCT.md)
 
 # EJAM-API
-In February 2025, USEPA removed its EJScreen website from public access, including an API for querying EJScreen indices/indicators and Census data. One of the main features of the API was geographically-based inquiries. It could be used to, for instance, return  EJScreen and Census metrics weighted based on the Census Blocks within an 3 mile buffer around a selected point. The API facilitated the creation of [community reports](https://www.sf.gov/sites/default/files/2024-03/EJScreen%20Community%20Report.pdf) based on those kinds of queries. 
+In February 2025, USEPA removed its EJSCREEN website from public access, including an API for querying EJSCREEN indices/indicators and Census data. One of the main features of the API was geographically-based inquiries. It could be used to, for instance, return EJSCREEN and Census metrics weighted based on the Census Blocks within a 3 mile buffer around a selected point. The API facilitated the creation of [community reports](https://www.sf.gov/sites/default/files/2024-03/EJScreen%20Community%20Report.pdf) based on those kinds of queries. 
 
-Recreating that API would require extensive reverse engineering of the ArcGIS map server(s) that hosted the API functionality. Instead, our approach is to draw on EJAM, an R package that produces similar kinds of outputs. EJAM does not currently provide an API; this repo contains files necessary to create a Docker image of EJAM and its dependencies as well as an API model.
+Recreating that API would require extensive reverse engineering of the ArcGIS map server(s) that hosted the API functionality. Instead, our approach is to draw on [EJAM](https://github.com/ejanalysis/EJAM), an open-source R package that powered EJSCREEN's "multisite" feature in January of 2025, designed to produce reports much like EJSCREEN's but for multiple locations. EJAM does not currently provide an API; this repo contains files necessary to create a Docker image of EJAM and its dependencies as well as an API model.
 
 # Model
 There are currently two endpoints for the API.
@@ -64,7 +64,7 @@ df
 ```
 
 # Set-up
-1. Work locally with EJAM by installing R/RStudio. Follow the instructions in the EJAM documentation.
+1. Work locally with EJAM by installing R/RStudio. Follow the [installation instructions](https://ejanalysis.github.io/EJAM/articles/installing.html) in the [EJAM documentation](https://ejanalysis.org/ejamdocs).
 2. Test changes to the API (i.e. modify `rest_controller.r`)
 3. Re-build and tag the Docker image
 4. Push to Docker Hub and/or Google Artifact Registry
@@ -80,3 +80,5 @@ This program is free software: you can redistribute it and/or modify it under th
 This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the [`LICENSE`](/LICENSE) file for details.
+
+For EJAM-specific license, citation, documentation, etc., see [ejanalysis.org/ejamdocs](https://ejanalysis.org/ejamdocs).
