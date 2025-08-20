@@ -14,12 +14,18 @@ handle_error <- function(message, type = "json") {
   return(list(error = message))
 }
 ####################################################################################################### #
-
-#* Serve static assets from the ./assets directory
-#* @assets ./assets /
-list()
+#* @apiTitle EJAM API
+#*
+#* @apiDescription Provides EJAM/EJScreen batch analysis summary results.
+#* See the EJAM package for technical documentation on functions powering the API, at <https://ejanalysis.org/ejamdocs>
 ####################################################################################################### #
+# assets ####
 
+##  #* Serve static assets from the ./assets directory
+##  #* @assets ./assets /
+##  list()
+####################################################################################################### #
+# ejamit ####
 
 #* Get EJAM analysis results table as JSON (on one site or the aggregate of multiple sites overall)
 #* See ejanalysis.org/docs for more information about the ejamit() function
@@ -213,7 +219,7 @@ function(
   }
 }
 ####################################################################################################### #
-
+# report ####
 
 #* Get EJAM analysis results report as HTML (on one site or the aggregate of multiple sites overall)
 #* See ejanalysis.org/docs for more information about the ejamit() and ejam2report() functions
@@ -281,7 +287,7 @@ function(
 #* @param download_city_fips_bounds passed to [area_sqmi()]
 #* @param download_noncity_fips_bounds passed to [area_sqmi()]
 #*
-#* @get /report
+#* @post /report
 #* @serializer html
 function(
     sitenumber = NULL,
@@ -408,3 +414,13 @@ function(
               launch_browser = FALSE)
 }
 ####################################################################################################### #
+
+# echo ####
+#
+#* Echo the parameter that was sent in
+#* @param msg The message to echo back.
+#* @get /echo
+#*
+function(msg="") {
+  list(msg = paste0("The message is: '", msg, "'"))
+}
