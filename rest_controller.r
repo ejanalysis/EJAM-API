@@ -42,7 +42,7 @@ fipper <- function(area, scale = "blockgroup") {
 
 # The ejamit_interface function serves as a unified interface for the ejamit function,
 # handling various input methods such as latitude/longitude, shapes (SHP), and FIPS codes.
-ejamit_interface <- function(area, method, buffer = 0, scale = "blockgroup") {
+ejamit_interface <- function(area, method, buffer = 0, scale = "blockgroup", endpoint="report") {
   # Validate buffer size to ensure it's within a reasonable limit.
   if (!is.numeric(buffer) || buffer > 15) {
     stop("Please select a buffer of 15 miles or less.")
@@ -67,7 +67,11 @@ ejamit_interface <- function(area, method, buffer = 0, scale = "blockgroup") {
          },
          "FIPS" = {
            # Process the FIPS code using the fipper function.
-           fips_codes <- fipper(area = area, scale = scale)
+           if (endpoint == "data"){
+             fips_codes <- fipper(area = area, scale = scale)
+           } else if (endpoint == "report") {
+             fips_codes <- area
+           }
            ejamit(fips = fips_codes, radius = buffer)
          },
          stop("Invalid method specified.") # Handle unrecognized methods.
@@ -80,6 +84,7 @@ ejamit_interface <- function(area, method, buffer = 0, scale = "blockgroup") {
 #* @param fips A FIPS code for a specific US Census geography
 #* @param buffer The buffer radius in miles
 #* @param geometries A boolean to indicate whether to include geometries in the output
+#* @param scale The Census geography at which to return results (blockgroup or county)
 #* @post /data
 function(sites = NULL, shape = NULL, fips = NULL, buffer = 0, geometries = FALSE, scale = NULL, res) {
   # Determine the input method.
@@ -93,7 +98,7 @@ function(sites = NULL, shape = NULL, fips = NULL, buffer = 0, geometries = FALSE
   
   # Perform the EJAM analysis.
   result <- tryCatch(
-    ejamit_interface(area = area, method = method, buffer = as.numeric(buffer), scale = scale),
+    ejamit_interface(area = area, method = method, buffer = as.numeric(buffer), scale = scale, endpoint = "data"),
     error = function(e) {
       res$status <- 400
       handle_error(e$message)
@@ -139,7 +144,7 @@ function(lat = NULL, lon = NULL, shape = NULL, fips = NULL, buffer = 3, res) {
   
   # Perform the EJAM analysis.
   result <- tryCatch(
-    ejamit_interface(area = area, method = method, buffer = as.numeric(buffer)),
+    ejamit_interface(area = area, method = method, buffer = as.numeric(buffer), endpoint="report"),
     error = function(e) {
       res$status <- 400
       handle_error(e$message, "html")
