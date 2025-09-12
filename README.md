@@ -31,8 +31,8 @@ A rectangular area of interest in Phoenix, with no buffer: https://ejamapi-84652
 - `sites` - a list of lat/lon pairs e.g. `[{"lat":33, "lon":-112}, {"lat":34, "lon":-114}]`
 - `shape` - a GeoJSON object describing an area of interest, such as a polygon of neighborhood boundaries
 - `buffer` - radius, in miles, around the center of a point or out from the edge of a polygon to extend the search. Default = 0
-- `fips` - A FIPS code for a specific US Census geography
-- `scale` - For FIPS requests, the unit of analysis (state, county, blockgroup)
+- `fips` - A FIPS code for a specific US Census geography (e.g. 10001)
+- `scale` - For FIPS requests, the unit of at which to return results (county or blockgroup)
 - `geometries` - A boolean to indicate whether to return a geometry field for each analyzed unit. Default = FALSE
 
 `data` expects either `sites` OR `shape` OR `fips`. 
