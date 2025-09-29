@@ -1,28 +1,28 @@
  [![Code of Conduct](https://img.shields.io/badge/%E2%9D%A4-code%20of%20conduct-blue.svg?style=flat)](https://github.com/edgi-govdata-archiving/overview/blob/main/CONDUCT.md)
 
 # EJAM-API
-In February 2025, USEPA removed its EJScreen website from public access, including an API for querying EJScreen indices/indicators and Census data. One of the main features of the API was geographically-based inquiries. It could be used to, for instance, return  EJScreen and Census metrics weighted based on the Census Blocks within an 3 mile buffer around a selected point. The API facilitated the creation of [community reports](https://www.sf.gov/sites/default/files/2024-03/EJScreen%20Community%20Report.pdf) based on those kinds of queries. 
+In February 2025, USEPA removed its EJSCREEN website from public access, including an API for querying EJSCREEN indices/indicators and Census data. One of the main features of the API was geographically-based inquiries. It could be used to, for instance, return EJSCREEN and Census metrics weighted based on the Census Blocks within a 3 mile buffer around a selected point. The API facilitated the creation of [community reports](https://www.sf.gov/sites/default/files/2024-03/EJScreen%20Community%20Report.pdf) based on those kinds of queries. 
 
-Recreating that API would require extensive reverse engineering of the ArcGIS map server(s) that hosted the API functionality. Instead, our approach is to draw on EJAM, an R package that produces similar kinds of outputs. EJAM does not currently provide an API; this repo contains files necessary to create a Docker image of EJAM and its dependencies as well as an API model.
+Recreating that API would require extensive reverse engineering of the ArcGIS map server(s) that hosted the API functionality. Instead, our approach is to draw on [EJAM](https://github.com/ejanalysis/EJAM), the non-EPA version of an open-source R package that provides EJSCREEN's "multisite" reporting feature. EJAM was designed to produce EJSCREEN-style community reports, including single-site reports and multisite reports (summaries over multiple locations). The EJAM package itself does not currently provide an API; this repo contains files necessary to create a Docker image of EJAM and its dependencies as well as an API model.
 
 # Model
 There are currently two endpoints for the API.
 
 ## Reports
 `report` accepts GET requests with the following parameters:
-- `lat` - the latitude of a given point
-- `lon` - the longitude of that point
-- `shape` - a GeoJSON object describing an area of interest, such as a polygon of neighborhood boundaries
-- `buffer` - radius, in miles, around the center of a point or out from the edge of a polygon to extend the search. EJAM default = 3.
-- `fips` - A FIPS code for a specific US Census geography
+- `lat` - the latitude of a given point, or comma-separated list like lat=33,32.5
+- `lon` - the longitude
+- `fips` - A FIPS code for a specific US Census geography, like fips=10 for one state, or comma-separated list like fips=10001,10003,10005 for 3 counties
+- `shape` - a GeoJSON text-encoded object describing an area of interest, such as a polygon of neighborhood boundaries
+- `buffer` - radius, in miles, around a point or out from the edge of a polygon to extend the search. EJAM default = 3. *Note: adding buffers around fips units may not be implemented yet.
 
-`report` expects either `lat`/`lon` OR `shape` OR `fips`. The default buffer is 3 miles but can be explicitly set to 0.
+`report` expects either `lat`/`lon` OR `shape` OR `fips`. The default buffer around a point is 3 miles but can be explicitly set to 0.
 An HTML format of a report is returned.
 
 ### Examples
-Block Group in the Phoenix, AZ area with a 1 mile buffer: https://ejamapi-84652557241.us-central1.run.app/report?buffer=1&fips=040131109012
+A County: https://ejamapi-84652557241.us-central1.run.app/report?buffer=1&fips=10001
 
-A point in the Phoenix area with a 4 mile buffer: https://ejamapi-84652557241.us-central1.run.app/report?lat=33&lon=-112&buffer=4
+A point in the Phoenix area with a 4 mile buffer (radius): https://ejamapi-84652557241.us-central1.run.app/report?lat=33&lon=-112&buffer=4
 
 A rectangular area of interest in Phoenix, with no buffer: https://ejamapi-84652557241.us-central1.run.app/report?shape=%7B"type"%3A"FeatureCollection"%2C"features"%3A%5B%7B"type"%3A"Feature"%2C"properties"%3A%7B%7D%2C"geometry"%3A%7B"coordinates"%3A%5B%5B%5B-112.01991856401462%2C33.51124624304089%5D%2C%5B-112.01991856401462%2C33.47010908826502%5D%2C%5B-111.95488826248605%2C33.47010908826502%5D%2C%5B-111.95488826248605%2C33.51124624304089%5D%2C%5B-112.01991856401462%2C33.51124624304089%5D%5D%5D%2C"type"%3A"Polygon"%7D%7D%5D%7D&buffer=0
 
@@ -64,7 +64,7 @@ df
 ```
 
 # Set-up
-1. Work locally with EJAM by installing R/RStudio. Follow the instructions in the EJAM documentation.
+1. Work locally with EJAM by installing R/RStudio. Follow the [installation instructions](https://ejanalysis.github.io/EJAM/articles/installing.html) in the [EJAM documentation](https://ejanalysis.org/ejamdocs).
 2. Test changes to the API (i.e. modify `rest_controller.r`)
 3. Re-build and tag the Docker image
 4. Push to Docker Hub and/or Google Artifact Registry
